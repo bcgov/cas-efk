@@ -2,8 +2,6 @@
 sshfile
 sshfile.pub
 
-# Ignore values.yaml file
-values.yaml
 
 # Ignore IntelliJ IDEA .idea directory
 .*

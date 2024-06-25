@@ -1,0 +1,18 @@
+namespace: default
+elasticSearchVolume: elasticsearch-data
+elasticsearch:
+  host: elasticsearch
+  port: 9200
+  storageRequest: 1Gi
+  volume: elasticsearch-data
+  storageClass: standard
+logging:
+  cpuRequest: 10m
+  cpuLimit: 50m
+  memoryRequest: 16Mi
+  memoryLimit: 64Mi
+kibana:
+  cpuRequest: 10m
+  cpuLimit: 100m
+  memoryRequest: 500Mi
+  memoryLimit: 1Gi
