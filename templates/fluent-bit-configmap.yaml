@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    "app.kubernetes.io/part-of": efk-stack
+data:
+  fluent-bit.conf: |-
+    [SERVICE]
+      Flush         5
+      Daemon        Off
+      Parsers_File  parsers.conf
+      Log_Level     debug
+      HTTP_Server   On
+      HTTP_Listen   0.0.0.0
+      HTTP_PORT     2020
+
+    [INPUT]
+      Name  http
+      Host  0.0.0.0
+      Port  8888
+
+    [OUTPUT]
+      Name                es
+      Match               *
+      Host                {{ .Values.elasticsearch.host }}
+      Port                {{ .Values.elasticsearch.port }}
+      Index               fluent-bit
+      Type                _doc
+      Suppress_Type_Name  On
+
+  parsers.conf: |-
+    [PARSER]
+      Name            json
+      Format          json
+      Time_Key        timestamp
+      Decode_Field_as escaped_utf8 log do_next
+      Decode_field_as json log

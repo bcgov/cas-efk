@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: {{ .Values.namespace }}
+  labels:
+    "app.kubernetes.io/part-of": efk-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:8.4.3
+          resources:
+            limits:
+              cpu: {{ .Values.kibana.cpuLimit }}
+              memory: {{ .Values.kibana.memoryLimit }}
+            requests:
+              cpu: {{ .Values.kibana.cpuRequest }}
+              memory: {{ .Values.kibana.memoryRequest }}
+          env:
+            - name: ELASTICSEARCH_URL
+              value: {{ .Values.elasticsearch.host }}:{{ .Values.elasticsearch.port }}
+          ports:
+            - containerPort: 5601

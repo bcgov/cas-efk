@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluent-bit
+  namespace: {{ .Values.namespace }}
+  labels:
+    "app.kubernetes.io/part-of": efk-stack
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fluent-bit
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+        "app.kubernetes.io/part-of": efk-stack
+    spec:
+      containers:
+        - name: fluent-bit
+          image: docker.io/fluent/fluent-bit:1.9.9
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 2020
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          ports:
+            - name: metrics
+              containerPort: 2020
+              protocol: TCP
+            - name: http-plugin
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 2020
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: {{ .Values.logging.cpuRequest }}
+              memory: {{ .Values.logging.memoryRequest }}
+            limits:
+              cpu: {{ .Values.logging.cpuLimit }}
+              memory: {{ .Values.logging.memoryLimit }}
+          volumeMounts:
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc
+      volumes:
+        - name: fluent-bit-config
+          configMap:
+            name: fluent-bit-config
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluent-bit
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: fluent-bit
+spec:
+  selector:
+    app: fluent-bit
+  clusterIP: None
+  ports:
+    - port: 8888
+      name: rest
