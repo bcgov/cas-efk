@@ -1,0 +1,6 @@
+# Ignore SSH key files
+sshfile
+sshfile.pub
+
+# Ignore values.yaml file
+values.yaml
